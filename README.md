@@ -154,6 +154,7 @@ add_executable(demo4 ${DIR_SRCS})
 ```
 
 **构建链接库**
+
 要使用 add_library,cmake可以这样写,见demo5，CMakeLists.txt中的内容如下:
 ```
 #cmake 版本要求
@@ -168,5 +169,52 @@ aux_source_directory(. DIR_SRCS)
 #STATIC，静态库 xxx.a
 add_library (mysharedlib SHARED ${DIR_SRCS})
 add_library (mystaticlib STATIC ${DIR_SRCS})
+
+```
+
+**使用链接库**
+
+
+这里引入了以下语句:
+
+```
+#将可执行文件输出到当前工程bin目录下
+set (EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+#将库文件输出到当前工程lib目录下
+set (LIBRARY_OUTPUT_PATH  ${PROJECT_SOURCE_DIR}/lib)
+#指定库文件路径
+link_directories(${PROJECT_SOURCE_DIR}/lib)
+#将目标文件与库文件链接
+target_link_libraries(demo4 mysharedlib)
+```
+案例1:
+cmake可以这样写,见demo6，此处需要执行两次cmake，首先要执行addlib下的cmake生成链接库，然后执行
+工程下的cmake，CMakeLists.txt中的内容如下:
+```
+#cmake 版本要求
+cmake_minimum_required(VERSION 2.8)
+
+#项目信息
+project(demo4)
+
+#将可执行文件输出到当前工程bin目录下
+set (EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+
+#向工程添加多个指定头文件的搜索路径
+include_directories (${PROJECT_SOURCE_DIR}/addlib)
+
+#指定库文件路径
+link_directories(${PROJECT_SOURCE_DIR}/addlib/lib)
+
+# 查找当前目录下的所有源文件
+# 并将名称保存到 DIR_SRCS 变量
+aux_source_directory(./src DIR_SRCS)
+
+
+#执行生成目标
+add_executable(demo6 ${DIR_SRCS})
+
+#链接库文件
+target_link_libraries(demo6 mysharedlib)
 
 ```
