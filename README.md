@@ -47,9 +47,8 @@ add_executable( demo1
 
 但是如果有几十个上百个源文件，再这样做就有离谱了，cmake提供了一个命令可以把指定目录下所有的源文件存储在一个变量中，这个命令就是：
 使用aux_source_directory()
-根据上述官网所述，cmake可以这样写:
-aux_source_directory(. DIR_SRCS)
-将当前目录的所有源文件保存到变量DIR_SRCS中，见demo2，CMakeLists.txt 中的内容如下：
+aux_source_directory(. DIR_SRCS)将当前目录的所有源文件保存到变量DIR_SRCS中,
+cmake可以这样写:见demo2，CMakeLists.txt 中的内容如下:
 
 ```
 #cmake 版本要求
@@ -114,4 +113,41 @@ aux_source_directory(mutl DIR_SRCS_3)
 
 #执行生成目标
 add_executable(demo3 ${DIR_SRCS_1} ${DIR_SRCS_2} ${DIR_SRCS_3})
+```
+案例2:一个标准结构清晰的目录树
+```
+.
+|-- CMakeLists.txt
+|-- include
+|   |-- add.h
+|   |-- div.h
+|   |-- mutl.h
+|   `-- sub.h
+`-- src
+    |-- add.cpp
+    |-- div.cpp
+    |-- main.cpp
+    |-- mutl.cpp
+    `-- sub.cpp
+```
+这样demo3的cmakelists就可以简化了，如下:
+```
+#cmake 版本要求
+cmake_minimum_required(VERSION 2.8)
+
+#项目信息
+
+project(demo4)
+
+#向工程添加多个指定头文件的搜索路径
+include_directories (include)
+
+# 查找当前目录下的所有源文件
+# 并将名称保存到 DIR_SRCS 变量
+aux_source_directory(./src DIR_SRCS)
+
+
+#执行生成目标
+add_executable(demo4 ${DIR_SRCS})
+
 ```
