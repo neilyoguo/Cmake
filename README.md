@@ -285,3 +285,40 @@ add_executable(demo8 ${DIR_SRCS})
 target_link_libraries (demo8 libmysqlclient.so)
 
 ```
+
+案例4:链接mysql,不使用绝对路径，通过find_package ,在目录下创建cmake文件夹，文件夹里使用了开源的FindMySQL.cmake。
+```
+#追加Modules目录
+SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+#通过find_package找Find<LibraryName>.cmake的文件,这个文件负责找到库所在的路径，为我们的项目引入头文件路径和库文件路径
+find_package(MySQL REQUIRED)
+```
+见demo9,CMakeLists.txts如下:
+```
+#cmake 版本要求
+cmake_minimum_required(VERSION 2.8)
+
+#项目信息
+project(demo9)
+
+#追加Modules目录
+SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
+# 查找当前目录下的所有源文件并将名称保存到 DIR_SRCS 变量
+aux_source_directory(. DIR_SRCS)
+
+
+#执行生成目标
+add_executable(demo9 ${DIR_SRCS})
+
+find_package(MySQL REQUIRED)
+if(MYSQL_INCLUDE_DIR)
+        include_directories(${MYSQL_INCLUDE_DIR})
+        message("include dir is found")
+endif()
+if(MYSQL_LIB)
+        target_link_libraries(demo9 ${MYSQL_LIB})
+        message("lib dir is found")
+endif()
+
+```
