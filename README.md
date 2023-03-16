@@ -93,7 +93,8 @@ add_executable(demo2 ${DIR_SRCS})
     `-- sub.cpp
 ```
 这里使用了include_directories()
-因为main.c里include了"div.h"和"mutl.h"，如果没有include_directories命令来指定头文件所在位置，就会无法编译.
+因为main.c里include了"div.h"和"mutl.h"，如果没有include_directories命令来指定头文件所在位置，就会无法编译,
+同时此处要注意aux_source_directory不会递归包含子目录，仅包含指定的dir目录，所以当有子目录时还是需要在添加一个,
 cmake可以这样写,见demo3，CMakeLists.txt中的内容如下:
 ```
 #cmake 版本要求
@@ -130,7 +131,7 @@ add_executable(demo3 ${DIR_SRCS_1} ${DIR_SRCS_2} ${DIR_SRCS_3})
     |-- mutl.cpp
     `-- sub.cpp
 ```
-这样demo3的cmakelists就可以简化了，如下:
+这样demo3的cmakelists就可以简化了，见demo4，CMakeLists.txt中的内容如下:
 ```
 #cmake 版本要求
 cmake_minimum_required(VERSION 2.8)
