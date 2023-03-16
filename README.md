@@ -223,8 +223,8 @@ demo6中，需要人为的在指定目录多执行一次cmake，可以引入以�
 ```
 #添加一个子目录并构建该子目录
 add_subdirectory (source_dir [binary_dir] [EXCLUDE_FROM_ALL])
-source_dir:必选参数，指定子目录，子目录下应该包含CMakeLists.txt文件和代码文件
-[binary_dir]:可选参数，执行子目录输出路径
+source_dir：必选参数，指定子目录，子目录下应该包含CMakeLists.txt文件和代码文件
+[binary_dir]：可选参数，指定子目录输出路径
 ```
 
 见demo7，修改后的CMakeLists.txts如下：
@@ -259,4 +259,29 @@ add_executable(demo7 ${DIR_SRCS})
 target_link_libraries(demo7 mysharedlib)
 ```
 
+案例3:链接mysql,前提是安装了mysql，这里使用的centos，通过yum install mysql-devel 安装了开发包，
+见demo8，此处包含的头文件和库文件使用了绝对路径，CMakeLists.txts如下：
+```
+#cmake 版本要求
+cmake_minimum_required(VERSION 2.8)
 
+#项目信息
+project(demo8)
+
+
+# 查找当前目录下的所有源文件并将名称保存到 DIR_SRCS 变量
+aux_source_directory(. DIR_SRCS)
+
+include_directories(
+        /usr/include/mysql
+)
+
+link_directories(
+        /usr/lib64/mysql
+)
+#执行生成目标
+add_executable(demo8 ${DIR_SRCS})
+
+target_link_libraries (demo8 libmysqlclient.so)
+
+```
