@@ -185,7 +185,7 @@ set (LIBRARY_OUTPUT_PATH  ${PROJECT_SOURCE_DIR}/lib)
 #指定库文件路径
 link_directories(${PROJECT_SOURCE_DIR}/lib)
 #将目标文件与库文件链接
-target_link_libraries(demo4 mysharedlib)
+target_link_libraries(demo6 mysharedlib)
 ```
 案例1:
 cmake可以这样写,见demo6，此处需要执行两次cmake，首先要执行addlib下的cmake生成链接库，然后执行
@@ -195,7 +195,7 @@ cmake可以这样写,见demo6，此处需要执行两次cmake，首先要执行a
 cmake_minimum_required(VERSION 2.8)
 
 #项目信息
-project(demo4)
+project(demo6)
 
 #将可执行文件输出到当前工程bin目录下
 set (EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
@@ -218,3 +218,45 @@ add_executable(demo6 ${DIR_SRCS})
 target_link_libraries(demo6 mysharedlib)
 
 ```
+案例2:
+demo6中，需要人为的在指定目录多执行一次cmake，可以引入以下语句，只在父目录执行即可
+```
+#添加一个子目录并构建该子目录
+add_subdirectory (source_dir [binary_dir] [EXCLUDE_FROM_ALL])
+source_dir:必选参数，指定子目录，子目录下应该包含CMakeLists.txt文件和代码文件
+[binary_dir]:可选参数，执行子目录输出路径
+```
+
+见demo7，修改后的CMakeLists.txts如下：
+```
+#cmake 版本要求
+cmake_minimum_required(VERSION 2.8)
+
+#项目信息
+project(demo7)
+
+#将可执行文件输出到当前工程bin目录下
+set (EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+
+#向工程添加多个指定头文件的搜索路径
+include_directories (${PROJECT_SOURCE_DIR}/addlib)
+
+#指定库文件路径
+link_directories(${PROJECT_SOURCE_DIR}/lib)
+
+#添加一个子目录并构建该子目录
+add_subdirectory(addlib ${PROJECT_SOURCE_DIR}/lib)
+
+# 查找当前目录下的所有源文件并将名称保存到 DIR_SRCS 变量
+aux_source_directory(./src DIR_SRCS)
+
+
+#执行生成目标
+add_executable(demo7 ${DIR_SRCS})
+
+#链接库文件
+
+target_link_libraries(demo7 mysharedlib)
+```
+
+
