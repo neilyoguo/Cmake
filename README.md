@@ -318,3 +318,69 @@ if(MYSQL_LIB)
 endif()
 
 ```
+
+## 安装
+CMake 也可以指定安装规则 ，通过install命令<br>
+在demo1可以加入以下命令
+
+```
+#指定可执行程序安装目录
+install (TARGETS demo1 RUNTIME DESTINATION bin)
+```
+在demo5可以加入以下命令
+```
+#指定静态库安装目录
+install (TARGETS mystaticlib ARCHIVE DESTINATION lib)
+#指定动态库安装目录
+install (TARGETS mysharedlib LIBRARY DESTINATION lib)
+#指定头文件安装目录
+install (FILES  add.h DESTINATION include)
+```
+上述安装目录都会默认安装到根目录/usr/local/ 下，如下：
+```
+[root@VM-48-31-centos demo5]# make install
+[ 50%] Built target mysharedlib
+[100%] Built target mystaticlib
+Install the project...
+-- Install configuration: ""
+-- Installing: /usr/local/lib/libmysharedlib.so
+-- Installing: /usr/local/lib/libmystaticlib.a
+-- Installing: /usr/local/include/add.h
+```
+可以通过修改 CMAKE_INSTALL_PREFIX 的值来指定这些文件应该安装到哪个目录
+
+## 生成安装包
+需要用到CPack ，它是由 CMake 提供的一个工具，专门用于打包,需要在cmakelists如下命令
+```
+# 设置生成的安装包名字
+set(CPACK_PACKAGE_NAME "example")
+# 这是生成的安装的版本号信息                       
+set(CPACK_PACKAGE_VERSION "1.2.3")               
+include(CPack)
+```
+这就可以通过cpack 命令来进行打包了，如
+```
+#生成xxx.tar.gz
+cpack -G TGZ
+#生成xxx.rpm
+cpack -G RPM
+```
+```
+[root@VM-48-31-centos demo1]# cpack -G TGZ
+CPack: Create package using TGZ
+CPack: Install projects
+CPack: - Run preinstall target for: hello
+CPack: - Install project: hello
+CPack: Create package
+CPack: - package: /root/neilyo/project/Cmake/demo1/example-1.2.3-Linux.tar.gz generated.
+```
+```
+[root@VM-48-31-centos demo1]# cpack -G RPM
+CPack: Create package using RPM
+CPack: Install projects
+CPack: - Run preinstall target for: hello
+CPack: - Install project: hello
+CPack: Create package
+CPackRPM: Will use GENERATED spec file: /root/neilyo/project/Cmake/demo1/_CPack_Packages/Linux/RPM/SPECS/example.spec
+CPack: - package: /root/neilyo/project/Cmake/demo1/example-1.2.3-Linux.rpm generated.
+```
