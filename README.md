@@ -1,9 +1,8 @@
 # Cmake
 cmake 实践
-
-**构建单个文件**
-
-如果要使用 cmake 来生成 makefile 的话，需要首先新建一个 CMakeLists.txt 文件，cmake 的所有配置都在这个文件中完成，见demo1，CMakeLists.txt 中的内容如下：
+***
+## 构建单个文件
+如果要使用 cmake 来生成 makefile 的话，需要首先新建一个 CMakeLists.txt 文件，cmake 的所有配置都在这个文件中完成，见[demo1](https://github.com/neilyoguo/Cmake/tree/main/demo1)，CMakeLists.txt 中的内容如下：
 ```
 #cmake 版本要求
 cmake_minimum_required(VERSION 2.8)
@@ -19,8 +18,8 @@ project(hello)
 #执行生成目标
 add_executable(hello main.cpp)
 ```
-
-**同一个目录下构建多个文件**
+***
+## 同一个目录下构建多个文件
 
 比如我们的目录如下：
 ```
@@ -48,7 +47,7 @@ add_executable( demo1
 但是如果有几十个上百个源文件，再这样做就有离谱了，cmake提供了一个命令可以把指定目录下所有的源文件存储在一个变量中，这个命令就是：
 使用aux_source_directory()
 aux_source_directory(. DIR_SRCS)将当前目录的所有源文件保存到变量DIR_SRCS中,
-cmake可以这样写:见demo2，CMakeLists.txt 中的内容如下:
+cmake可以这样写:见[demo2](https://github.com/neilyoguo/Cmake/tree/main/demo2)，CMakeLists.txt 中的内容如下:
 
 ```
 #cmake 版本要求
@@ -70,10 +69,13 @@ project(demo2)
 add_executable(demo2 ${DIR_SRCS})
 
 ```
+***
+## 不同目录下构建多个文件
 
-**同一个目录下构建多个文件**
-
-案例1:一个凌乱的目录树
+* 一个凌乱的目录树,这里使用了include_directories()
+因为main.c里include了"div.h"和"mutl.h"，如果没有include_directories命令来指定头文件所在位置，就会无法编译,
+同时此处要注意aux_source_directory不会递归包含子目录，仅包含指定的dir目录，所以当有子目录时还是需要在添加一个,
+cmake可以这样写,见[demo3](https://github.com/neilyoguo/Cmake/tree/main/demo3)，CMakeLists.txt中的内容如下:
 
 ```
 .
@@ -92,10 +94,7 @@ add_executable(demo2 ${DIR_SRCS})
     |-- main.cpp
     `-- sub.cpp
 ```
-这里使用了include_directories()
-因为main.c里include了"div.h"和"mutl.h"，如果没有include_directories命令来指定头文件所在位置，就会无法编译,
-同时此处要注意aux_source_directory不会递归包含子目录，仅包含指定的dir目录，所以当有子目录时还是需要在添加一个,
-cmake可以这样写,见demo3，CMakeLists.txt中的内容如下:
+
 ```
 #cmake 版本要求
 cmake_minimum_required(VERSION 2.8)
@@ -115,7 +114,7 @@ aux_source_directory(mutl DIR_SRCS_3)
 #执行生成目标
 add_executable(demo3 ${DIR_SRCS_1} ${DIR_SRCS_2} ${DIR_SRCS_3})
 ```
-案例2:一个标准结构清晰的目录树
+* 一个标准结构清晰的目录树,这样demo3的cmakelists就可以简化了，见[demo4](https://github.com/neilyoguo/Cmake/tree/main/demo4)，CMakeLists.txt中的内容如下:
 ```
 .
 |-- CMakeLists.txt
@@ -131,7 +130,7 @@ add_executable(demo3 ${DIR_SRCS_1} ${DIR_SRCS_2} ${DIR_SRCS_3})
     |-- mutl.cpp
     `-- sub.cpp
 ```
-这样demo3的cmakelists就可以简化了，见demo4，CMakeLists.txt中的内容如下:
+
 ```
 #cmake 版本要求
 cmake_minimum_required(VERSION 2.8)
@@ -152,10 +151,10 @@ aux_source_directory(./src DIR_SRCS)
 add_executable(demo4 ${DIR_SRCS})
 
 ```
+***
+## 构建链接库
 
-**构建链接库**
-
-要使用 add_library,cmake可以这样写,见demo5，CMakeLists.txt中的内容如下:
+要使用 add_library,cmake可以这样写,见[demo5](https://github.com/neilyoguo/Cmake/tree/main/demo5)，CMakeLists.txt中的内容如下:
 ```
 #cmake 版本要求
 cmake_minimum_required(VERSION 2.8)
@@ -171,8 +170,8 @@ add_library (mysharedlib SHARED ${DIR_SRCS})
 add_library (mystaticlib STATIC ${DIR_SRCS})
 
 ```
-
-**使用链接库**
+***
+## 使用链接库
 
 
 这里引入了以下语句:
@@ -187,8 +186,7 @@ link_directories(${PROJECT_SOURCE_DIR}/lib)
 #将目标文件与库文件链接
 target_link_libraries(demo6 mysharedlib)
 ```
-案例1:
-cmake可以这样写,见demo6，此处需要执行两次cmake，首先要执行addlib下的cmake生成链接库，然后执行
+* [demo6](https://github.com/neilyoguo/Cmake/tree/main/demo6)，此处需要执行两次cmake，首先要执行addlib下的cmake生成链接库，然后执行
 工程下的cmake，CMakeLists.txt中的内容如下:
 ```
 #cmake 版本要求
@@ -218,8 +216,7 @@ add_executable(demo6 ${DIR_SRCS})
 target_link_libraries(demo6 mysharedlib)
 
 ```
-案例2:
-demo6中，需要人为的在指定目录多执行一次cmake，可以引入以下语句，只在父目录执行即可
+* demo6中，需要人为的在指定目录多执行一次cmake，可以引入以下语句，只在父目录执行即可,见[demo7](https://github.com/neilyoguo/Cmake/tree/main/demo7)，修改后的CMakeLists.txts如下：
 ```
 #添加一个子目录并构建该子目录
 add_subdirectory (source_dir [binary_dir] [EXCLUDE_FROM_ALL])
@@ -227,7 +224,7 @@ source_dir：必选参数，指定子目录，子目录下应该包含CMakeLists
 [binary_dir]：可选参数，指定子目录输出路径
 ```
 
-见demo7，修改后的CMakeLists.txts如下：
+
 ```
 #cmake 版本要求
 cmake_minimum_required(VERSION 2.8)
@@ -259,8 +256,7 @@ add_executable(demo7 ${DIR_SRCS})
 target_link_libraries(demo7 mysharedlib)
 ```
 
-案例3:链接mysql,前提是安装了mysql，这里使用的centos，通过yum install mysql-devel 安装了开发包，
-见demo8，此处包含的头文件和库文件使用了绝对路径，CMakeLists.txts如下：
+* 链接mysql,前提是安装了mysql，这里使用的centos，通过yum install mysql-devel 安装了开发包，见[demo8](https://github.com/neilyoguo/Cmake/tree/main/demo8)，此处包含的头文件和库文件使用了绝对路径，CMakeLists.txts如下：
 ```
 #cmake 版本要求
 cmake_minimum_required(VERSION 2.8)
@@ -286,14 +282,14 @@ target_link_libraries (demo8 libmysqlclient.so)
 
 ```
 
-案例4:链接mysql,不使用绝对路径，通过find_package ,在目录下创建cmake文件夹，文件夹里使用了开源的FindMySQL.cmake。
+* 链接mysql,不使用绝对路径，通过find_package ,在目录下创建cmake文件夹，文件夹里使用了开源的FindMySQL.cmake,见[demo9](https://github.com/neilyoguo/Cmake/tree/main/demo9),CMakeLists.txts如下:
 ```
 #追加Modules目录
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 #通过find_package找Find<LibraryName>.cmake的文件,这个文件负责找到库所在的路径，为我们的项目引入头文件路径和库文件路径
 find_package(MySQL REQUIRED)
 ```
-见demo9,CMakeLists.txts如下:
+
 ```
 #cmake 版本要求
 cmake_minimum_required(VERSION 2.8)
